@@ -14,12 +14,13 @@ Class NewsController extends Controller
 
 public function create(Request $request)
   {
-
+      // Varidationを行う
       $this->validate($request, News::$rules);
       $news = new News;
       $form = $request->all();
       
-      if (isset($form['image'])) {
+      // formに画像があれば、保存する
+      if(isset($form['image'])) {
         $path = $request->file('image')->store('public/image');
         $news->image_path = basename($path);
       } else {
@@ -30,11 +31,24 @@ public function create(Request $request)
       unset($form['_token']);
       // フォームから送信されてきたimageを削除する
       unset($form['image']);
-      
       // データベースに保存する
       $news->fill($form);
       $news->save();
 
       return redirect('admin/news/create');
   }  
+  
+ public function index(Request $request)
+  {
+      $cond_title = $request->cond_title;
+      if ($cond_title != '') {
+          // 検索されたら検索結果を取得する
+          $posts = News::where('title', $cond_title)->get();
+      } else {
+          // それ以外はすべてのニュースを取得する
+          $posts = News::all();
+      }
+      return view('admin.news.index', ['posts' => $posts, 'cond_title' => $cond_title]);
+  }
+
 }
