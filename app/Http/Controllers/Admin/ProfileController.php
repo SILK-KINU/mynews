@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Profile;
 
 class ProfileController extends Controller
 {
@@ -12,20 +13,35 @@ class ProfileController extends Controller
         return view('admin.profile.create');
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        
+        // Validationをかける
+        $this->validate($request, Profile::$rules);
+        $news = new Profile;
+        $form = $request->all();
+      
+        // フォームから送信されてきた_tokenを削除する
+        unset($form['_token']);
+        // データベースに保存する
+        $news->fill($form);
+        $news->save();
+      
         return redirect('admin/profile/create');
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
-        return view('admin.profile.edit');
+      $profile_form = Profile::find($request->id);
+      if (empty($profile_form)) {
+        abort(404);    
+      }
+        return view('admin.profile.edit', ['profile_form' => $profile_form]);
     }
+    
     
     public function update()
     {
-      
+      //Validationをかける
       $this->validate($request, Profile::$rules);
 
       $news = new Profile;
@@ -36,7 +52,7 @@ class ProfileController extends Controller
         $path = $request->file('image')->store('public/image');
         $news->image_path = basename($path);
       } else {
-          $news->image_path = null;
+        $news->image_path = null;
       }
 
       // フォームから送信されてきた_tokenを削除する
