@@ -39,21 +39,21 @@ class ProfileController extends Controller
     }
     
     
-    public function update()
+    public function update(Request $request)
     {
       //Validationをかける
       $this->validate($request, Profile::$rules);
 
-      $news = new Profile;
+      $profile = new Profile;
       $form = $request->all();
 
-      // フォームから画像が送信されてきたら、保存して、$news->image_path に画像のパスを保存する
-      if (isset($form['image'])) {
-        $path = $request->file('image')->store('public/image');
-        $news->image_path = basename($path);
-      } else {
-        $news->image_path = null;
-      }
+      // // フォームから画像が送信されてきたら、保存して、$news->image_path に画像のパスを保存する
+      // if (isset($form['image'])) {
+      //   $path = $request->file('image')->store('public/image');
+      //   $profile->image_path = basename($path);
+      // } else {
+      //   $profile->image_path = null;
+      // }
 
       // フォームから送信されてきた_tokenを削除する
       unset($form['_token']);
@@ -61,10 +61,10 @@ class ProfileController extends Controller
       unset($form['image']);
 
       // データベースに保存する
-      $news->fill($form);
-      $news->save();
+      $profile->fill($form)->save();
+      //$profile->save();
 
-      return redirect('admin/profile/create');
+      return redirect('admin/profile/edit');
 
     }
 }
