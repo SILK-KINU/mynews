@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Profile;
 
+use app\History;
+
+use Carbln\Carnon;
+
 class ProfileController extends Controller
 {
     public function add()
@@ -44,7 +48,7 @@ class ProfileController extends Controller
       //Validationをかける
       $this->validate($request, Profile::$rules);
 
-      $profile = new Profile;
+      $profile = Profile::find($request->id);
       $form = $request->all();
 
       // // フォームから画像が送信されてきたら、保存して、$news->image_path に画像のパスを保存する
