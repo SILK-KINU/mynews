@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Profile;
 
-use app\History;
+use App\ProfileHistories;
 
-use Carbln\Carnon;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
@@ -67,6 +67,11 @@ class ProfileController extends Controller
       // データベースに保存する
       $profile->fill($form)->save();
       //$profile->save();
+      
+      $history = new ProfileHistories;
+      $history->profile_id = $profile->id;
+      $history->edited_at = Carbon::now();
+      $history->save();
 
       return redirect('admin/profile/edit');
 
