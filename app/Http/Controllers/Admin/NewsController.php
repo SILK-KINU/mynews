@@ -80,7 +80,7 @@ public function create(Request $request)
       if ($request->remove == 'true') {
             $news_form['image_path'] = null;
         } elseif ($request->file('image')) {
-            $path = Storage::disk('s3')->putFile('/',$form['image'],'public');
+            $path = Storage::disk('s3')->putFile('/',$news_form['image'],'public');
             $news->image_path = Storage::disk('s3')->url($path);
         } else {
             $news_form['image_path'] = $news->image_path;
@@ -101,7 +101,7 @@ public function create(Request $request)
   
   public function delete(Request $request)
   {
-      // 該当するNews Modelを取得
+      // 該当するN      ews Modelを取得
       $news = News::find($request->id);
       // 削除する
       $news->delete();
